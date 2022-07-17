@@ -7,6 +7,11 @@
         <title>ChatRoom</title>
     </head>
     <body>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid">
+              <span class="navbar-brand mb-0 h1" id="room-name-heading">Room Name: </span>
+            </div>
+        </nav>
         <div class="container">
             <div class="row d-flex justify-content-center">
                 <div class="col-6">
@@ -28,6 +33,7 @@
         <script>
             const roomName=JSON.parse(document.getElementById('room-name').textContent);
             const userName=JSON.parse(document.getElementById('user_username').textContent);
+            document.getElementById("room-name-heading").innerHTML+=roomName
             document.getElementById("submit").onclick = function(e){
                 const messageInputDom=document.getElementById("input")
                 const message=userName+": "+messageInputDom.value
@@ -42,9 +48,14 @@
                 window.location.host+'/ws/'+
                 roomName + '/'
             )
+            
+            chatSocket.onopen=function(){
+                chatSocket.send(JSON.stringify({
+                    'messageLog':userName+" Joined the Chat!",
+                }))
+            }
             chatSocket.onmessage=function(e){
                 const data=JSON.parse(e.data)
-                console.log(data.messageLog)
                 document.getElementById('chat-text').value+=(data.messageLog+'\n')
             }
         </script>
